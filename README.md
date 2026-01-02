@@ -38,6 +38,79 @@
 
 ---
 
+## 🧠 Mapa Mental del Sistema
+
+<div align="center">
+
+```
+                                    ┌─────────────────────────────────────┐
+                                    │         🌐 LIBRARY API              │
+                                    │      Sistema de Biblioteca          │
+                                    └──────────────────┬──────────────────┘
+                                                       │
+                    ┌──────────────────────────────────┼──────────────────────────────────┐
+                    │                                  │                                  │
+                    ▼                                  ▼                                  ▼
+        ┌───────────────────────┐        ┌───────────────────────┐        ┌───────────────────────┐
+        │     📂 CATEGORIES     │        │      ✍️ AUTHORS       │        │       📖 BOOKS        │
+        │    ─────────────      │        │    ─────────────      │        │    ─────────────      │
+        │                       │        │                       │        │                       │
+        │  🏷️ Ficción           │        │  👤 Gabriel García M. │        │  📕 Cien años de...   │
+        │  🏷️ Ciencia           │        │  👤 Isabel Allende    │        │  📗 La casa de los... │
+        │  🏷️ Historia          │        │  👤 Pablo Neruda      │        │  📘 El túnel          │
+        │  🏷️ Fantasía          │        │  👤 Jorge Luis Borges │        │  📙 Rayuela           │
+        │                       │        │                       │        │                       │
+        └───────────┬───────────┘        └───────────┬───────────┘        └───────────┬───────────┘
+                    │                                │                                │
+                    │                                │                                │
+                    └──────────────────────┬─────────┴────────────────────────────────┘
+                                           │
+                                           ▼
+                            ┌─────────────────────────────┐
+                            │      🔧 FUNCIONALIDADES     │
+                            └─────────────────────────────┘
+                                           │
+            ┌──────────────┬───────────────┼───────────────┬──────────────┐
+            │              │               │               │              │
+            ▼              ▼               ▼               ▼              ▼
+        ┌───────┐      ┌───────┐      ┌───────┐      ┌───────┐      ┌───────┐
+        │ POST  │      │  GET  │      │ GET/  │      │ PATCH │      │DELETE │
+        │Create │      │ List  │      │  :id  │      │Update │      │Remove │
+        └───────┘      └───────┘      └───────┘      └───────┘      └───────┘
+```
+
+</div>
+
+### 🎯 Flujo de la Aplicación
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   📱 Client  │────▶│  🚀 NestJS   │────▶│  📊 TypeORM  │────▶│ 🐘 PostgreSQL│
+│   (Request)  │     │  Controller  │     │   Service    │     │   Database   │
+└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+       ▲                                                              │
+       │                                                              │
+       └──────────────────────────────────────────────────────────────┘
+                              📤 JSON Response
+```
+
+### 💡 ¿Por qué este Stack?
+
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   🎯 NestJS         → Arquitectura modular, escalable y mantenible           ║
+║   📘 TypeScript     → Tipado estático, menos errores en runtime              ║
+║   🐘 PostgreSQL     → Base de datos relacional robusta y confiable           ║
+║   🔄 TypeORM        → Mapeo objeto-relacional con soporte completo           ║
+║   🐳 Docker         → Entorno consistente en desarrollo y producción         ║
+║   📄 Swagger        → Documentación automática e interactiva                 ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
 ## 🏗️ Arquitectura
 
 El proyecto sigue la **arquitectura modular de NestJS** con separación clara de responsabilidades:
@@ -45,7 +118,7 @@ El proyecto sigue la **arquitectura modular de NestJS** con separación clara de
 ```
 📦 library-backend
 ├── 📂 src
-│   ├── 📂 categories           # Módulo de Categorías
+│   ├── 📂 categories           # Módulo de Categorías ✅
 │   │   ├── 📂 dto              # Data Transfer Objects
 │   │   │   ├── create-category.dto.ts
 │   │   │   ├── update-category.dto.ts
@@ -55,11 +128,30 @@ El proyecto sigue la **arquitectura modular de NestJS** con separación clara de
 │   │   ├── categories.controller.ts
 │   │   ├── categories.service.ts
 │   │   └── categories.module.ts
-│   ├── 📂 authors              # 🔜 Próximamente
-│   ├── 📂 books                # 🔜 Próximamente
+│   ├── 📂 authors              # Módulo de Autores ✅
+│   │   ├── 📂 dto
+│   │   │   ├── create-author.dto.ts
+│   │   │   ├── update-author.dto.ts
+│   │   │   └── author-response.dto.ts
+│   │   ├── 📂 entities
+│   │   │   └── author.entity.ts
+│   │   ├── authors.controller.ts
+│   │   ├── authors.service.ts
+│   │   └── authors.module.ts
+│   ├── 📂 books                # Módulo de Libros ✅
+│   │   ├── 📂 dto
+│   │   │   ├── create-book.dto.ts
+│   │   │   ├── update-book.dto.ts
+│   │   │   └── book-response.dto.ts
+│   │   ├── 📂 entities
+│   │   │   └── book.entity.ts
+│   │   ├── books.controller.ts
+│   │   ├── books.service.ts
+│   │   └── books.module.ts
 │   ├── app.module.ts           # Módulo raíz
 │   └── main.ts                 # Bootstrap de la aplicación
 ├── 📂 test                     # Tests E2E
+├── 📂 postman                  # Colección Postman
 ├── 🐳 docker-compose.yml       # Configuración Docker
 ├── ⚙️ .env                     # Variables de entorno
 └── 📄 package.json
@@ -78,6 +170,82 @@ El proyecto sigue la **arquitectura modular de NestJS** con separación clara de
 │                 │       │ isbn            │       │                 │
 │                 │       │ publishedYear   │       │                 │
 └─────────────────┘       └─────────────────┘       └─────────────────┘
+```
+
+### 📦 Patrón DTO (Data Transfer Object)
+
+Este proyecto implementa el **patrón DTO** para separar la lógica de transferencia de datos de las entidades de base de datos. Usamos 3 tipos de DTOs por cada módulo:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────┐
+│                           📦 TIPOS DE DTOs                                     │
+├────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                │
+│   📥 CREATE DTO              📝 UPDATE DTO              📤 RESPONSE DTO        │
+│   ─────────────              ─────────────              ──────────────         │
+│                                                                                │
+│   • Valida datos de          • Extiende Create DTO     • Define qué datos     │
+│     entrada (POST)           • Campos opcionales         retorna la API       │
+│   • Campos requeridos        • PartialType<>           • Oculta campos        │
+│   • @IsNotEmpty()            • Para PATCH                sensibles            │
+│   • @IsString()                                        • Documenta Swagger    │
+│                                                                                │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 💡 ¿Por qué usamos Response DTOs?
+
+| Beneficio | Descripción |
+|-----------|-------------|
+| 🔒 **Seguridad** | Evita exponer campos sensibles de la entidad (passwords, tokens, etc.) |
+| 📄 **Documentación** | Swagger genera documentación precisa de las respuestas |
+| 🎯 **Control** | Define exactamente qué campos se envían al cliente |
+| 🔄 **Desacoplamiento** | Separa la estructura de BD de la respuesta de la API |
+| ✅ **Consistencia** | Garantiza formato uniforme en todas las respuestas |
+
+#### 📝 Ejemplo Práctico
+
+```typescript
+// ❌ SIN Response DTO - Expone toda la entidad
+@Get(':id')
+async findOne(@Param('id') id: number): Promise<Author> {
+  return this.service.findOne(id);  // Podría exponer campos sensibles
+}
+
+// ✅ CON Response DTO - Control total de la respuesta
+@Get(':id')
+async findOne(@Param('id') id: number): Promise<{ message: string; data: AuthorResponseDto }> {
+  const data = await this.service.findOne(id);
+  return {
+    message: 'Autor encontrado',
+    data,  // Solo campos definidos en AuthorResponseDto
+  };
+}
+```
+
+#### 📁 Estructura de DTOs por Módulo
+
+```typescript
+// 📥 create-author.dto.ts - Validación de entrada
+export class CreateAuthorDto {
+  @ApiProperty({ example: 'Gabriela Mistral' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(150)
+  name: string;
+}
+
+// 📝 update-author.dto.ts - Campos opcionales
+export class UpdateAuthorDto extends PartialType(CreateAuthorDto) {}
+
+// 📤 author-response.dto.ts - Respuesta controlada
+export class AuthorResponseDto {
+  @ApiProperty({ example: 1 })
+  id: number;
+
+  @ApiProperty({ example: 'Gabriela Mistral' })
+  name: string;
+}
 ```
 
 ---
@@ -264,17 +432,43 @@ http://localhost:3000/docs
 | `PATCH` | `/categories/:id` | Actualizar categoría |
 | `DELETE` | `/categories/:id` | Eliminar categoría |
 
-#### Ejemplo de Request/Response
+#### Authors
 
-**POST /categories**
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/authors` | Crear nuevo autor |
+| `GET` | `/authors` | Listar todos los autores |
+| `GET` | `/authors/:id` | Obtener autor por ID |
+| `PATCH` | `/authors/:id` | Actualizar autor |
+| `DELETE` | `/authors/:id` | Eliminar autor |
 
+#### Books
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/books` | Crear nuevo libro |
+| `GET` | `/books` | Listar todos los libros |
+| `GET` | `/books/:id` | Obtener libro por ID |
+| `PATCH` | `/books/:id` | Actualizar libro |
+| `DELETE` | `/books/:id` | Eliminar libro |
+
+---
+
+## 🎯 Guía de Uso Paso a Paso
+
+> ⚠️ **IMPORTANTE**: Los libros requieren un **autor** y una **categoría** existentes. Sigue este orden:
+
+### Paso 1️⃣: Crear una Categoría
+
+```bash
+# POST http://localhost:3000/categories
+curl -X POST http://localhost:3000/categories \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ciencia Ficción"}'
+```
+
+**Response:**
 ```json
-// Request Body
-{
-  "name": "Ciencia Ficción"
-}
-
-// Response 201
 {
   "message": "Categoría creada correctamente",
   "data": {
@@ -282,6 +476,111 @@ http://localhost:3000/docs
     "name": "Ciencia Ficción"
   }
 }
+```
+
+### Paso 2️⃣: Crear un Autor
+
+```bash
+# POST http://localhost:3000/authors
+curl -X POST http://localhost:3000/authors \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Gabriel García Márquez"}'
+```
+
+**Response:**
+```json
+{
+  "message": "Autor creado correctamente",
+  "data": {
+    "id": 1,
+    "name": "Gabriel García Márquez"
+  }
+}
+```
+
+### Paso 3️⃣: Crear un Libro
+
+```bash
+# POST http://localhost:3000/books
+# Usa los IDs obtenidos en los pasos anteriores
+curl -X POST http://localhost:3000/books \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Cien años de soledad",
+    "authorId": 1,
+    "categoryId": 1
+  }'
+```
+
+**Response:**
+```json
+{
+  "message": "Libro creado correctamente",
+  "data": {
+    "id": 1,
+    "title": "Cien años de soledad",
+    "author": {
+      "id": 1,
+      "name": "Gabriel García Márquez"
+    },
+    "category": {
+      "id": 1,
+      "name": "Ciencia Ficción"
+    }
+  }
+}
+```
+
+### 📊 Flujo Visual de Creación
+
+```
+╭─────────────────╮     ╭─────────────────╮     ╭─────────────────╮
+│  1️⃣ CATEGORY  │     │   2️⃣ AUTHOR   │     │    3️⃣ BOOK    │
+│─────────────────│     │─────────────────│     │─────────────────│
+│                 │     │                 │     │                 │
+│  POST /categories │────▶│  POST /authors  │────▶│  POST /books    │
+│                 │     │                 │     │                 │
+│  🏷️ Obtener ID   │     │  🏷️ Obtener ID   │     │  📖 Usa ambos IDs │
+│     (ej: 1)     │     │     (ej: 1)     │     │  authorId: 1    │
+│                 │     │                 │     │  categoryId: 1  │
+╰─────────────────╯     ╰─────────────────╯     ╰─────────────────╯
+```
+
+---
+
+## 📦 Colección Postman
+
+Para probar la API fácilmente, importa la colección de Postman incluida:
+
+### Importar Colección
+
+1. Abre **Postman**
+2. Click en **Import** (o `Ctrl + O`)
+3. Selecciona el archivo: `postman/Library_API_Collection.json`
+4. ¡Listo! Tendrás todos los endpoints configurados
+
+### Contenido de la Colección
+
+```
+📁 Library API
+├── 📁 Categories
+│   ├── POST   - Create Category
+│   ├── GET    - Get All Categories
+│   ├── GET    - Get Category by ID
+│   ├── PATCH  - Update Category
+│   └── DELETE - Delete Category
+├── 📁 Authors
+│   ├── POST   - Create Author
+│   ├── GET    - Get All Authors
+│   ├── GET    - Get Author by ID
+│   ├── PATCH  - Update Author
+│   └── DELETE - Delete Author
+└── 📁 Books
+    ├── POST   - Create Book
+    ├── GET    - Get All Books
+    ├── GET    - Get Book by ID
+    ├── PATCH  - Update Book
+    └── DELETE - Delete Book
 ```
 
 ---
@@ -365,14 +664,16 @@ npm run test:cov
 - [x] Docker Compose para desarrollo
 - [x] Documentación Swagger
 - [x] Módulo de **Categories** (CRUD completo)
+- [x] Módulo de **Authors** (CRUD completo)
+- [x] Módulo de **Books** (CRUD completo con relaciones)
+- [x] Relaciones Many-to-One (Book → Author, Book → Category)
+- [x] Colección Postman para testing
 
 ### 🔜 Próximas Features
-- [ ] Módulo de **Authors** (Autores)
-- [ ] Módulo de **Books** (Libros)
-- [ ] Relaciones Many-to-One entre entidades
 - [ ] Paginación y filtros avanzados
 - [ ] Autenticación JWT
 - [ ] Tests de integración
+- [ ] Deploy a producción
 
 ---
 
