@@ -35,6 +35,7 @@
 | 🐳 **Docker Ready** | Configuración lista para desarrollo con Docker Compose |
 | 🔒 **Seguridad** | Pipes de validación global, whitelist y sanitización |
 | 📊 **TypeORM** | ORM robusto con soporte para migraciones y relaciones |
+| 🌐 **CORS Habilitado** | Permite peticiones desde aplicaciones frontend (React, Vue, etc.) |
 
 ---
 
@@ -620,6 +621,52 @@ docker-compose down
 
 # Eliminar volúmenes (⚠️ borra datos)
 docker-compose down -v
+```
+
+---
+
+## 🌐 CORS (Cross-Origin Resource Sharing)
+
+Esta API tiene **CORS habilitado** para permitir que aplicaciones frontend (como React, Vue, Angular, etc.) puedan realizar peticiones desde diferentes orígenes.
+
+### ¿Qué es CORS?
+
+CORS es un mecanismo de seguridad del navegador que restringe las peticiones HTTP entre diferentes dominios. Al habilitar CORS en el backend, permitimos que aplicaciones cliente en otros puertos u orígenes puedan consumir nuestra API.
+
+### Configuración Actual
+
+CORS está habilitado globalmente en `src/main.ts`:
+
+```typescript
+// main.ts
+const app = await NestFactory.create(AppModule);
+app.enableCors(); // ✅ Permite todas las peticiones cross-origin
+```
+
+### Uso con Frontend
+
+Con CORS habilitado, puedes consumir la API desde cualquier aplicación frontend:
+
+```javascript
+// Ejemplo con React/fetch
+const response = await fetch('http://localhost:3000/categories');
+const data = await response.json();
+
+// Ejemplo con Axios
+import axios from 'axios';
+const { data } = await axios.get('http://localhost:3000/categories');
+```
+
+### Configuración Avanzada (Opcional)
+
+Para producción, puedes restringir CORS a orígenes específicos:
+
+```typescript
+app.enableCors({
+  origin: ['http://localhost:5173', 'https://mi-frontend.com'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  credentials: true,
+});
 ```
 
 ---
