@@ -1,56 +1,104 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
-  Patch,
+  Controller,
   Delete,
+  Get,
+  HttpCode,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Category } from './entities/category.entity';
-
+import { CategoryResponseDto } from './dto/category-response.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly service: CategoriesService) {}
 
+  // CREATE
   @Post()
-  @ApiOperation({ summary: 'Create category' })
-  @ApiResponse({ status: 201, type: Category })
-  create(@Body() dto: CreateCategoryDto) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Crear categoría' })
+  @ApiResponse({ status: 201, type: CategoryResponseDto })
+  @Post()
+  async create(@Body() dto: CreateCategoryDto): Promise<{
+    message: string;
+    data: CategoryResponseDto;
+  }> {
+    const data = await this.service.create(dto);
+
+    return {
+      message: 'Categoría creada correctamente',
+      data,
+    };
   }
 
+  // FIND ALL
   @Get()
-  @ApiOperation({ summary: 'List categories' })
-  findAll() {
-    return this.service.findAll();
+  @ApiOperation({ summary: 'Listar categorías' })
+  @ApiResponse({ status: 200, type: [CategoryResponseDto] })
+  @Get()
+  async findAll(): Promise<{
+    message: string;
+    data: CategoryResponseDto[];
+  }> {
+    const data = await this.service.findAll();
+
+    const message =
+      data.length === 0
+        ? 'No existen categorías creadas'
+        : 'Las categorías del sistema son:';
+
+    return {
+      message,
+      data,
+    };
   }
 
+  // FIND ONE
   @Get(':id')
-  @ApiOperation({ summary: 'Get category by id' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
+  @ApiOperation({ summary: 'Obtener categoría por id' })
+  @ApiResponse({ status: 200, type: CategoryResponseDto })
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<{
+    message: string;
+    data: CategoryResponseDto;
+  }> {
+    const data = await this.service.findOne(id);
+    return {
+      message: 'Categoría encontrada',
+      data,
+    };
   }
 
+  // UPDATE
   @Patch(':id')
-  @ApiOperation({ summary: 'Update category' })
-  update(
+  @ApiOperation({ summary: 'Actualizar categoría' })
+  @ApiResponse({ status: 200, type: CategoryResponseDto })
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCategoryDto,
-  ) {
-    return this.service.update(id, dto);
+  ): Promise<{
+    message: string;
+    data: CategoryResponseDto;
+  }> {
+    const data = await this.service.update(id, dto);
+    return {
+      message: 'Categoría actualizada correctamente',
+      data,
+    };
   }
 
+  // DELETE
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete category' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.service.remove(id);
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Eliminar categoría' })
+  @ApiResponse({ status: 204 })
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.service.remove(id);
   }
 }
