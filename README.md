@@ -626,18 +626,133 @@ docker-compose down -v
 
 ## 🧪 Testing
 
+Este proyecto implementa una estrategia de **testing completa** utilizando **Jest** como framework de testing y **mocks** para simular las dependencias de base de datos.
+
+### 🎯 Estrategia de Testing
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                         PIRÁMIDE DE TESTING                                   ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║                                                                               ║
+║                              /\                                               ║
+║                             /  \         E2E Tests                            ║
+║                            /    \        (Pocos, lentos, costosos)            ║
+║                           /──────\                                            ║
+║                          /        \      Integration Tests                    ║
+║                         /          \     (Algunos, medianos)                  ║
+║                        /────────────\                                         ║
+║                       /              \   Unit Tests ← NOSOTROS ESTAMOS AQUÍ   ║
+║                      /                \  (Muchos, rápidos, baratos)           ║
+║                     /──────────────────\                                      ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+```
+
+### 📦 Estructura de Tests
+
+```
+📂 src
+├── 📂 categories
+│   ├── categories.service.ts           # Código de producción
+│   └── categories.service.spec.ts      # ✅ Tests unitarios
+├── 📂 authors
+│   ├── authors.service.ts
+│   └── authors.service.spec.ts         # ✅ Tests unitarios
+└── 📂 books
+    ├── books.service.ts
+    └── books.service.spec.ts           # ✅ Tests unitarios
+```
+
+### 🎭 Patrón de Mocking
+
+Utilizamos **mocks** para simular el repositorio de TypeORM, lo que nos permite:
+
+- ✅ **Aislar** los tests de la base de datos real
+- ✅ **Controlar** las respuestas esperadas
+- ✅ **Ejecutar** tests rápidamente sin conexión a BD
+
+```typescript
+// 🎭 Mock del repositorio
+const mockCategoryRepo = {
+  findOne: jest.fn(),
+  find: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  remove: jest.fn(),
+};
+
+// 📦 Inyección del mock en el módulo de testing
+const module: TestingModule = await Test.createTestingModule({
+  providers: [
+    CategoriesService,
+    {
+      provide: getRepositoryToken(Category),
+      useValue: mockCategoryRepo,  // 👈 Usamos el mock
+    },
+  ],
+}).compile();
+```
+
+### 📝 Anatomía de un Test (Patrón AAA)
+
+Cada test sigue el patrón **Arrange-Act-Assert**:
+
+```typescript
+it('should create a category', async () => {
+  // 1️⃣ ARRANGE (Preparar)
+  const dto = { name: 'Ficción' };
+  mockCategoryRepo.findOne.mockResolvedValue(null);
+  mockCategoryRepo.create.mockReturnValue({ id: 1, name: 'Ficción' });
+  mockCategoryRepo.save.mockResolvedValue({ id: 1, name: 'Ficción' });
+
+  // 2️⃣ ACT (Actuar)
+  const result = await service.create(dto);
+
+  // 3️⃣ ASSERT (Verificar)
+  expect(result).toBeDefined();
+  expect(result.name).toBe('Ficción');
+});
+```
+
+### 📊 Cobertura de Tests
+
+| Módulo | Tests | Métodos Cubiertos |
+|--------|-------|-------------------|
+| **Categories** | 1 | create |
+| **Authors** | 10 | create, findAll, findOne, update, remove |
+| **Books** | 12 | create, findAll, findOne, update, remove |
+| **Total** | **23** | CRUD completo |
+
+### 🚀 Comandos de Testing
+
 ```bash
-# Tests unitarios
+# Ejecutar todos los tests
 npm run test
 
-# Tests con watch mode
+# Ejecutar tests en modo watch (se re-ejecutan al cambiar código)
 npm run test:watch
 
-# Tests E2E
-npm run test:e2e
-
-# Cobertura de tests
+# Ejecutar tests con reporte de cobertura
 npm run test:cov
+
+# Ejecutar solo tests de un archivo específico
+npm run test -- authors.service.spec.ts
+
+# Ejecutar tests E2E (end-to-end)
+npm run test:e2e
+```
+
+### ✅ Resultado de Tests
+
+```
+ PASS  src/categories/categories.service.spec.ts
+ PASS  src/authors/authors.service.spec.ts
+ PASS  src/books/books.service.spec.ts
+
+Test Suites: 4 passed, 4 total
+Tests:       26 passed, 26 total
+Time:        4.664 s
 ```
 
 ---
@@ -668,11 +783,12 @@ npm run test:cov
 - [x] Módulo de **Books** (CRUD completo con relaciones)
 - [x] Relaciones Many-to-One (Book → Author, Book → Category)
 - [x] Colección Postman para testing
+- [x] **Tests Unitarios** con Jest + Mocks (26 tests)
 
 ### 🔜 Próximas Features
 - [ ] Paginación y filtros avanzados
 - [ ] Autenticación JWT
-- [ ] Tests de integración
+- [ ] Tests E2E (end-to-end)
 - [ ] Deploy a producción
 
 ---
